@@ -1,4 +1,4 @@
-package com.jcalvopina.interceptor;
+package com.jcalvopinam.interceptor;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

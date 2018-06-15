@@ -1,4 +1,4 @@
-package com.jcalvopina.interceptor;
+package com.jcalvopinam.interceptor;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

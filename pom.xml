@@ -3,13 +3,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.jcalvopina</groupId>
-    <artifactId>interceptor</artifactId>
+    <groupId>com.jcalvopinam</groupId>
+    <artifactId>rest-interceptor</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>interceptor</name>
-    <description>Intercept http requests</description>
+    <name>rest-interceptor</name>
+    <description>Intercept all http requests</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -40,6 +40,11 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.9.5</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -50,6 +55,5 @@
             </plugin>
         </plugins>
     </build>
-
 
 </project>
