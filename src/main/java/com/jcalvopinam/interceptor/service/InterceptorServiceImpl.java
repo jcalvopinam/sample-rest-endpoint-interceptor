@@ -35,10 +35,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author Juan Calvopina
@@ -47,10 +44,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class InterceptorServiceImpl extends OncePerRequestFilter implements InterceptorService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InterceptorServiceImpl.class);
-    private static final String CUSTOM_HEADER = "custom-header";
     private static final String UTF_8 = "UTF-8";
 
-    private Map<String, String> headerMap = new HashMap<>();
+    private Map<String, String> headerMap;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -60,34 +56,29 @@ public class InterceptorServiceImpl extends OncePerRequestFilter implements Inte
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         response.setCharacterEncoding(UTF_8);
 
-        Enumeration headerNames = request.getHeaderNames();
-        while (headerNames.hasMoreElements()) {
-            String key = (String) headerNames.nextElement();
-            String value = request.getHeader(key);
-            headerMap.put(key, value);
-        }
+        RequestWrapper myRequestWrapper = new RequestWrapper(request);
 
-        filterChain.doFilter(request, response);
+        this.getHeaders(myRequestWrapper);
+        this.getBody(myRequestWrapper);
+
+        filterChain.doFilter(myRequestWrapper, response);
     }
 
     @Override
-    public void execute(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException {
-        this.doFilterInternal(request, response, filterChain);
+    public boolean hasCustomHeader(String header) {
+        return (header != null && headerMap.get(header) != null);
     }
 
-    @Override
-    public AtomicBoolean hasCustomHeader(Map<String, String> headers) {
-        AtomicBoolean response = new AtomicBoolean(false);
+    private void getHeaders(RequestWrapper request) {
+        LOGGER.info("> Get Headers from: {}", request.getRequestURL().toString());
 
-        this.headerMap.forEach((k, v) -> {
-            LOGGER.debug(" > [header]: {} [value]: {}", k, v);
-            if (CUSTOM_HEADER.equals(k)) {
-                LOGGER.info(" Has a custom header: {}", headers.get(CUSTOM_HEADER));
-                response.set(true);
-            }
-        });
-        return response;
+        headerMap = request.getHeaders();
+        headerMap.forEach((k, v) -> LOGGER.info("Key: {} \t\t Value: {}", k, v));
+    }
+
+    private void getBody(RequestWrapper request) {
+        LOGGER.info("> Get Body from: {}", request.getRequestURL().toString());
+        LOGGER.info("\tbody: {}", request.getBody());
     }
 
 }

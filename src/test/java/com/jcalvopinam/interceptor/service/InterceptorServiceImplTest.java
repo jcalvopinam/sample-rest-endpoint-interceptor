@@ -62,13 +62,15 @@ public class InterceptorServiceImplTest {
     @Mock
     private FilterChain filterChain;
 
-    private Map<String, String> headers;
+    @Mock
+    private Map<String, String> headerMap;
+
+    private String header;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        headers = new HashMap<>();
-        headers.put("custom-header", "CUSTOM VALUE");
+        header = "custom-header";
     }
 
     @Test
@@ -79,31 +81,23 @@ public class InterceptorServiceImplTest {
     }
 
     @Test
-    public void execute() throws ServletException, IOException {
-        doNothing().when(interceptorService).execute(request, response, filterChain);
-        interceptorService.execute(request, response, filterChain);
-        verify(interceptorService, times(1)).execute(request, response, filterChain);
-    }
-
-    @Test
     public void hasCustomHeaderShouldReturnTrue() {
-        when(interceptorService.hasCustomHeader(headers)).thenReturn(new AtomicBoolean(true));
-        AtomicBoolean atomicBoolean = interceptorService.hasCustomHeader(headers);
-        assertTrue(atomicBoolean.get());
+        when(headerMap.get(header)).thenReturn(header);
+        when(interceptorService.hasCustomHeader(header)).thenReturn(true);
+        assertTrue(interceptorService.hasCustomHeader(header));
     }
 
     @Test
     public void hasCustomHeaderShouldReturnFalse() {
-        when(interceptorService.hasCustomHeader(headers)).thenReturn(new AtomicBoolean(false));
-        AtomicBoolean atomicBoolean = interceptorService.hasCustomHeader(headers);
-        assertFalse(atomicBoolean.get());
-    }
+        when(headerMap.get(header)).thenReturn(isNull());
+        when(interceptorService.hasCustomHeader(header)).thenReturn(false);
+        assertFalse(interceptorService.hasCustomHeader(header));
+}
 
     @Test
     public void hasNotCustomHeaderShouldReturnFalse() {
-        when(interceptorService.hasCustomHeader(null)).thenReturn(new AtomicBoolean(false));
-        AtomicBoolean atomicBoolean = interceptorService.hasCustomHeader(null);
-        assertFalse(atomicBoolean.get());
+        when(interceptorService.hasCustomHeader(null)).thenReturn(false);
+        assertFalse(interceptorService.hasCustomHeader(null));
     }
 
 }

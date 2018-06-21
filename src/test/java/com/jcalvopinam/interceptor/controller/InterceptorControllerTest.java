@@ -37,7 +37,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.mockito.Mockito.when;
@@ -57,7 +56,7 @@ public class InterceptorControllerTest {
     private static final String URL_PARAMETER = "url";
     private static final String URL = "www.github.com/juanca87";
 
-    private Map<String, String> headers;
+    private String header;
 
     @Autowired
     private MockMvc mvc;
@@ -67,13 +66,12 @@ public class InterceptorControllerTest {
 
     @Before
     public void setUp() {
-        headers = new HashMap<>();
-        headers.put("custom-header", "CUSTOM VALUE");
+        header = "custom-header";
     }
 
     @Test
     public void testGetInterceptorShouldReturnOk() throws Exception {
-        when(interceptorService.hasCustomHeader(headers)).thenReturn(new AtomicBoolean((true)));
+        when(interceptorService.hasCustomHeader(header)).thenReturn(true);
         mvc.perform(get(INTERCEPTOR_PATH)
                             .param(URL_PARAMETER, URL)
                             .accept(MediaType.APPLICATION_JSON))
@@ -82,7 +80,7 @@ public class InterceptorControllerTest {
 
     @Test
     public void testGetInterceptorWhenUrlIsNotSentThenFails() throws Exception {
-        when(interceptorService.hasCustomHeader(headers)).thenReturn(new AtomicBoolean((true)));
+        when(interceptorService.hasCustomHeader(header)).thenReturn(true);
         mvc.perform(get(INTERCEPTOR_PATH)
                             .accept(MediaType.APPLICATION_JSON))
            .andExpect(status().isBadRequest());
@@ -90,7 +88,7 @@ public class InterceptorControllerTest {
 
     @Test
     public void testGetInterceptorShouldReturnBody() throws Exception {
-        when(interceptorService.hasCustomHeader(headers)).thenReturn(new AtomicBoolean((true)));
+        when(interceptorService.hasCustomHeader(header)).thenReturn(true);
         mvc.perform(get(INTERCEPTOR_PATH)
                             .param(URL_PARAMETER, URL)
                             .accept(MediaType.APPLICATION_JSON))
@@ -100,12 +98,12 @@ public class InterceptorControllerTest {
 
     @Test
     public void testGetInterceptorShouldReturnNullBody() throws Exception {
-        when(interceptorService.hasCustomHeader(null)).thenReturn(new AtomicBoolean((true)));
+        when(interceptorService.hasCustomHeader(null)).thenReturn(false);
         mvc.perform(get(INTERCEPTOR_PATH)
                             .param(URL_PARAMETER, URL)
                             .accept(MediaType.APPLICATION_JSON))
            .andExpect(status().isOk())
-           .andExpect(content().string("The URL: \"" + URL + "\" has header header? null"));
+           .andExpect(content().string("The URL: \"" + URL + "\" has header header? false"));
     }
 
 }

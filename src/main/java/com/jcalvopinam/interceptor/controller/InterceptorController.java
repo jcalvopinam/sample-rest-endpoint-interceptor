@@ -28,14 +28,7 @@ import com.jcalvopinam.interceptor.service.InterceptorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author Juan Calvopina
@@ -44,15 +37,23 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @RequestMapping("/interceptor")
 public class InterceptorController {
 
+    private static final String CUSTOM_HEADER = "custom-header";
+
     @Autowired
     InterceptorService interceptorService;
 
     @GetMapping
     public ResponseEntity getInterceptor(@RequestParam final String url) {
-        Map<String, String> headers = new HashMap<>();
-        headers.put("custom-header", "CUSTOM VALUE");
-        AtomicBoolean atomicBoolean = interceptorService.hasCustomHeader(headers);
-        return ResponseEntity.status(HttpStatus.OK).body("The URL: \"" + url + "\" has header header? " + atomicBoolean);
+        boolean hasHeader = interceptorService.hasCustomHeader(CUSTOM_HEADER);
+        return ResponseEntity.status(HttpStatus.OK)
+                             .body("The URL: \"" + url + "\" has header header? " + hasHeader);
+    }
+
+    @PostMapping
+    public ResponseEntity postInterceptor(@RequestBody final String body) {
+        boolean hasHeader = interceptorService.hasCustomHeader(CUSTOM_HEADER);
+        return ResponseEntity.status(HttpStatus.OK)
+                             .body("The Body: \"" + body + "\" has header header? " + hasHeader);
     }
 
 }

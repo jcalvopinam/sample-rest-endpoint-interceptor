@@ -24,22 +24,11 @@
 
 package com.jcalvopinam.interceptor.service;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 /**
  * @author Juan Calvopina
  */
 public interface InterceptorService {
 
-    void execute(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException;
-
-    AtomicBoolean hasCustomHeader(Map<String, String> headers);
+    boolean hasCustomHeader(String header);
 
 }
