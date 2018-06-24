@@ -26,8 +26,7 @@ package com.jcalvopinam.interceptor.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.MediaType;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -37,10 +36,13 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
 
+import static java.util.Optional.ofNullable;
+import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
+
 /**
  * @author Juan Calvopina
  */
-@Component
+@Service
 public class InterceptorServiceImpl extends OncePerRequestFilter implements InterceptorService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InterceptorServiceImpl.class);
@@ -53,32 +55,40 @@ public class InterceptorServiceImpl extends OncePerRequestFilter implements Inte
             throws ServletException, IOException {
 
         request.setCharacterEncoding(UTF_8);
-        response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+        response.setContentType(APPLICATION_JSON_UTF8_VALUE);
         response.setCharacterEncoding(UTF_8);
 
-        RequestWrapper myRequestWrapper = new RequestWrapper(request);
+        CustomRequestWrapper customRequestWrapper = new CustomRequestWrapper(request);
 
-        this.getHeaders(myRequestWrapper);
-        this.getBody(myRequestWrapper);
+        this.getHeaders(customRequestWrapper);
+        this.getBody(customRequestWrapper);
 
-        filterChain.doFilter(myRequestWrapper, response);
+        CustomResponseWrapper customResponseWrapper = new CustomResponseWrapper(response);
+        filterChain.doFilter(customRequestWrapper, customResponseWrapper);
+
+        this.getResponseContent(customResponseWrapper);
     }
 
     @Override
     public boolean hasCustomHeader(String header) {
-        return (header != null && headerMap.get(header) != null);
+        return (ofNullable(header).isPresent() && ofNullable(headerMap.get(header)).isPresent());
     }
 
-    private void getHeaders(RequestWrapper request) {
+    private void getHeaders(CustomRequestWrapper request) {
         LOGGER.info("> Get Headers from: {}", request.getRequestURL().toString());
 
         headerMap = request.getHeaders();
-        headerMap.forEach((k, v) -> LOGGER.info("Key: {} \t\t Value: {}", k, v));
+        headerMap.forEach((k, v) -> LOGGER.debug("Key: {} \t\t Value: {}", k, v));
     }
 
-    private void getBody(RequestWrapper request) {
+    private void getBody(CustomRequestWrapper request) {
         LOGGER.info("> Get Body from: {}", request.getRequestURL().toString());
         LOGGER.info("\tbody: {}", request.getBody());
+    }
+
+    private void getResponseContent(CustomResponseWrapper response) {
+        LOGGER.info("> Get Response status: {}", response.getStatus());
+        LOGGER.info("\tresponse: {}", response.getResponseContent());
     }
 
 }

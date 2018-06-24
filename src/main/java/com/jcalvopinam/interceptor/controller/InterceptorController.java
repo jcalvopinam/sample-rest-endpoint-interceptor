@@ -34,7 +34,7 @@ import org.springframework.web.bind.annotation.*;
  * @author Juan Calvopina
  */
 @RestController
-@RequestMapping("/interceptor")
+@RequestMapping("/api")
 public class InterceptorController {
 
     private static final String CUSTOM_HEADER = "custom-header";
@@ -46,14 +46,14 @@ public class InterceptorController {
     public ResponseEntity getInterceptor(@RequestParam final String url) {
         boolean hasHeader = interceptorService.hasCustomHeader(CUSTOM_HEADER);
         return ResponseEntity.status(HttpStatus.OK)
-                             .body("The URL: \"" + url + "\" has header header? " + hasHeader);
+                             .body("The URL: \"" + url + "\" has the custom-header? " + hasHeader);
     }
 
     @PostMapping
     public ResponseEntity postInterceptor(@RequestBody final String body) {
         boolean hasHeader = interceptorService.hasCustomHeader(CUSTOM_HEADER);
         return ResponseEntity.status(HttpStatus.OK)
-                             .body("The Body: \"" + body + "\" has header header? " + hasHeader);
+                             .body("The Body: \"" + body + "\" has the custom-header? " + hasHeader);
     }
 
 }

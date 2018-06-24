@@ -52,7 +52,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class InterceptorControllerTest {
 
-    private static final String INTERCEPTOR_PATH = "/interceptor";
+    private static final String INTERCEPTOR_PATH = "/api";
     private static final String URL_PARAMETER = "url";
     private static final String URL = "www.github.com/juanca87";
 
@@ -93,7 +93,7 @@ public class InterceptorControllerTest {
                             .param(URL_PARAMETER, URL)
                             .accept(MediaType.APPLICATION_JSON))
            .andExpect(status().isOk())
-           .andExpect(content().string("The URL: \"" + URL + "\" has header header? true"));
+           .andExpect(content().string("The URL: \"" + URL + "\" has the custom-header? true"));
     }
 
     @Test
@@ -103,7 +103,7 @@ public class InterceptorControllerTest {
                             .param(URL_PARAMETER, URL)
                             .accept(MediaType.APPLICATION_JSON))
            .andExpect(status().isOk())
-           .andExpect(content().string("The URL: \"" + URL + "\" has header header? false"));
+           .andExpect(content().string("The URL: \"" + URL + "\" has the custom-header? false"));
     }
 
 }

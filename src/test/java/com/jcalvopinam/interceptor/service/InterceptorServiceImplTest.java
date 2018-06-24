@@ -36,9 +36,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -82,17 +80,17 @@ public class InterceptorServiceImplTest {
 
     @Test
     public void hasCustomHeaderShouldReturnTrue() {
-        when(headerMap.get(header)).thenReturn(header);
-        when(interceptorService.hasCustomHeader(header)).thenReturn(true);
+        when(headerMap.get(anyString())).thenReturn(header);
+        when(interceptorService.hasCustomHeader(anyString())).thenReturn(true);
         assertTrue(interceptorService.hasCustomHeader(header));
     }
 
     @Test
     public void hasCustomHeaderShouldReturnFalse() {
-        when(headerMap.get(header)).thenReturn(isNull());
-        when(interceptorService.hasCustomHeader(header)).thenReturn(false);
+        when(headerMap.get(anyString())).thenReturn(null);
+        when(interceptorService.hasCustomHeader(anyString())).thenReturn(false);
         assertFalse(interceptorService.hasCustomHeader(header));
-}
+    }
 
     @Test
     public void hasNotCustomHeaderShouldReturnFalse() {
